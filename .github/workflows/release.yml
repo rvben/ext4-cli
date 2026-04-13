@@ -172,7 +172,7 @@ jobs:
 
       - name: Publish to PyPI
         if: ${{ !inputs.dry_run && !inputs.skip_pypi }}
-        run: uv publish /tmp/artifacts/build-*/*.whl /tmp/artifacts/sdist/*.tar.gz
+        run: uv publish --skip-existing /tmp/artifacts/build-*/target/wheels/*.whl /tmp/artifacts/sdist/*.tar.gz
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
 
@@ -180,9 +180,9 @@ jobs:
         if: ${{ inputs.dry_run == true && !inputs.skip_pypi }}
         run: |
           echo "DRY RUN: Would upload to PyPI:"
-          find /tmp/artifacts/build-* -name "*.whl" -type f | sort
+          find /tmp/artifacts/build-*/target/wheels -name "*.whl" -type f | sort
           find /tmp/artifacts/sdist -name "*.tar.gz" -type f | sort
-          uv tool run twine check /tmp/artifacts/build-*/*.whl /tmp/artifacts/sdist/*.tar.gz
+          uv tool run twine check /tmp/artifacts/build-*/target/wheels/*.whl /tmp/artifacts/sdist/*.tar.gz
 
       - name: Skip PyPI publishing
         if: ${{ inputs.skip_pypi == true }}
