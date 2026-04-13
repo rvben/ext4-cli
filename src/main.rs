@@ -69,7 +69,7 @@ fn main() {
         // Check for permission denied
         if let Some(io_err) = e.downcast_ref::<std::io::Error>() {
             if io_err.kind() == std::io::ErrorKind::PermissionDenied {
-                eprintln!("Error: {e}");
+                eprintln!("Error: {e:#}");
                 eprintln!("Hint: try running with sudo");
                 process::exit(2);
             }
@@ -77,10 +77,10 @@ fn main() {
         // Check for ext4-view not-found errors
         let msg = e.to_string();
         if msg.contains("not found") || msg.contains("NotFound") {
-            eprintln!("Error: {e}");
+            eprintln!("Error: {e:#}");
             process::exit(3);
         }
-        eprintln!("Error: {e}");
+        eprintln!("Error: {e:#}");
         process::exit(1);
     }
 }
