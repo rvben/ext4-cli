@@ -172,7 +172,7 @@ jobs:
 
       - name: Publish to PyPI
         if: ${{ !inputs.dry_run && !inputs.skip_pypi }}
-        run: uv publish --skip-existing /tmp/artifacts/build-*/target/wheels/*.whl /tmp/artifacts/sdist/*.tar.gz
+        run: uv publish --check-url https://pypi.org/simple/ /tmp/artifacts/build-*/target/wheels/*.whl /tmp/artifacts/sdist/*.tar.gz
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
 
