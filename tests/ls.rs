@@ -85,3 +85,25 @@ fn ls_on_file_exits_with_error() {
         .assert()
         .failure();
 }
+
+#[test]
+fn ls_hides_dotfiles_by_default() {
+    // `..` is present in every ext4 directory but must be hidden without --all
+    Command::cargo_bin("ext4")
+        .unwrap()
+        .args(["--source", &fixture("rich.img"), "ls", "/etc"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("..").not());
+}
+
+#[test]
+fn ls_all_shows_dotfiles() {
+    // `..` must appear when --all is given
+    Command::cargo_bin("ext4")
+        .unwrap()
+        .args(["--source", &fixture("rich.img"), "ls", "--all", "/etc"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(".."));
+}

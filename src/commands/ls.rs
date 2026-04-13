@@ -1,5 +1,5 @@
 use anyhow::Result;
-use ext4_view::Ext4;
+use ext4_view::{Ext4, FileType};
 use serde::Serialize;
 
 use crate::output;
@@ -29,12 +29,14 @@ pub fn run_ls(fs: &Ext4, path: &str, long: bool, all: bool, json: bool) -> Resul
 
         let meta = entry.metadata()?;
         let file_type = meta.file_type();
-        let type_str = if meta.is_dir() {
-            "directory"
-        } else if meta.is_symlink() {
-            "symlink"
-        } else {
-            "file"
+        let type_str = match file_type {
+            FileType::Directory => "directory",
+            FileType::Symlink => "symlink",
+            FileType::Regular => "file",
+            FileType::BlockDevice => "block_device",
+            FileType::CharacterDevice => "char_device",
+            FileType::Fifo => "fifo",
+            FileType::Socket => "socket",
         };
 
         entries.push(LsEntry {
