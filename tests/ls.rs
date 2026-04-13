@@ -60,9 +60,7 @@ fn ls_json_is_valid_array() {
     let json: serde_json::Value = serde_json::from_slice(&output).unwrap();
     assert!(json.is_array());
     let arr = json.as_array().unwrap();
-    let names: Vec<&str> = arr.iter()
-        .map(|e| e["name"].as_str().unwrap())
-        .collect();
+    let names: Vec<&str> = arr.iter().map(|e| e["name"].as_str().unwrap()).collect();
     assert!(names.contains(&"fstab"));
     assert!(names.contains(&"passwd"));
 }

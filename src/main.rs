@@ -93,7 +93,12 @@ fn run() -> anyhow::Result<()> {
             let src = require_source(cli.source)?;
             commands::run_info(&src, json)
         }
-        Commands::Ls { long, all, json, path } => {
+        Commands::Ls {
+            long,
+            all,
+            json,
+            path,
+        } => {
             let src = require_source(cli.source)?;
             let fs = source::open_source(&src)?;
             let path = path.as_deref().unwrap_or("/");
@@ -104,7 +109,11 @@ fn run() -> anyhow::Result<()> {
             let fs = source::open_source(&src)?;
             commands::run_cat(&fs, &path)
         }
-        Commands::Cp { src_path, local_dest, recursive } => {
+        Commands::Cp {
+            src_path,
+            local_dest,
+            recursive,
+        } => {
             let src = require_source(cli.source)?;
             let fs = source::open_source(&src)?;
             commands::run_cp(&fs, &src_path, &local_dest, recursive)
@@ -118,7 +127,5 @@ fn run() -> anyhow::Result<()> {
 }
 
 fn require_source(source: Option<String>) -> anyhow::Result<String> {
-    source.ok_or_else(|| {
-        anyhow!("no source specified — use --source <PATH> or set EXT4_SOURCE")
-    })
+    source.ok_or_else(|| anyhow!("no source specified — use --source <PATH> or set EXT4_SOURCE"))
 }

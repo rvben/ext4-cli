@@ -39,8 +39,7 @@ impl Ext4Read for AlignedReader {
 }
 
 pub fn open_source(path: &str) -> Result<Ext4> {
-    let file =
-        File::open(path).with_context(|| format!("failed to open '{path}'"))?;
+    let file = File::open(path).with_context(|| format!("failed to open '{path}'"))?;
     Ext4::load(Box::new(AlignedReader { file }))
         .with_context(|| format!("failed to read ext4 filesystem from '{path}'"))
 }

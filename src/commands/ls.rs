@@ -55,7 +55,10 @@ pub fn run_ls(fs: &Ext4, path: &str, long: bool, all: bool, json: bool) -> Resul
         output::print_json(&entries);
     } else if long {
         for e in &entries {
-            println!("{:10}  {:5}  {:5}  {:8}  {}", e.mode, e.uid, e.gid, e.size, e.name);
+            println!(
+                "{:10}  {:5}  {:5}  {:8}  {}",
+                e.mode, e.uid, e.gid, e.size, e.name
+            );
         }
     } else {
         for e in &entries {

@@ -1,4 +1,4 @@
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use ext4_view::Ext4;
 use std::io::Read;
 use std::path::Path;

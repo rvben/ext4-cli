@@ -12,8 +12,10 @@ fn cp_file_to_directory() {
     Command::cargo_bin("ext4")
         .unwrap()
         .args([
-            "--source", &fixture("rich.img"),
-            "cp", "/etc/fstab",
+            "--source",
+            &fixture("rich.img"),
+            "cp",
+            "/etc/fstab",
             tmp.path().to_str().unwrap(),
         ])
         .assert()
@@ -28,8 +30,10 @@ fn cp_file_to_new_path() {
     Command::cargo_bin("ext4")
         .unwrap()
         .args([
-            "--source", &fixture("rich.img"),
-            "cp", "/etc/fstab",
+            "--source",
+            &fixture("rich.img"),
+            "cp",
+            "/etc/fstab",
             dest.to_str().unwrap(),
         ])
         .assert()
@@ -46,8 +50,11 @@ fn cp_recursive_directory() {
     Command::cargo_bin("ext4")
         .unwrap()
         .args([
-            "--source", &fixture("rich.img"),
-            "cp", "-r", "/etc",
+            "--source",
+            &fixture("rich.img"),
+            "cp",
+            "-r",
+            "/etc",
             dest.to_str().unwrap(),
         ])
         .assert()
@@ -62,8 +69,10 @@ fn cp_directory_without_recursive_fails() {
     Command::cargo_bin("ext4")
         .unwrap()
         .args([
-            "--source", &fixture("rich.img"),
-            "cp", "/etc",
+            "--source",
+            &fixture("rich.img"),
+            "cp",
+            "/etc",
             tmp.path().to_str().unwrap(),
         ])
         .assert()
@@ -77,8 +86,10 @@ fn cp_nonexistent_src_exits_3() {
     Command::cargo_bin("ext4")
         .unwrap()
         .args([
-            "--source", &fixture("rich.img"),
-            "cp", "/no/such/file",
+            "--source",
+            &fixture("rich.img"),
+            "cp",
+            "/no/such/file",
             tmp.path().to_str().unwrap(),
         ])
         .assert()

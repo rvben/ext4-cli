@@ -31,7 +31,13 @@ fn stat_directory_succeeds() {
 fn stat_json_output() {
     let output = Command::cargo_bin("ext4")
         .unwrap()
-        .args(["--source", &fixture("rich.img"), "stat", "--json", "/etc/fstab"])
+        .args([
+            "--source",
+            &fixture("rich.img"),
+            "stat",
+            "--json",
+            "/etc/fstab",
+        ])
         .assert()
         .success()
         .get_output()

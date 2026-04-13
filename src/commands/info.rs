@@ -1,4 +1,4 @@
-use anyhow::{anyhow, bail, Result};
+use anyhow::{Result, anyhow, bail};
 use serde::Serialize;
 use std::io::{Read, Seek, SeekFrom};
 
@@ -18,11 +18,22 @@ fn read_u32_le(buf: &[u8], offset: usize) -> u32 {
 fn parse_uuid(bytes: &[u8]) -> String {
     format!(
         "{:02x}{:02x}{:02x}{:02x}-{:02x}{:02x}-{:02x}{:02x}-{:02x}{:02x}-{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}",
-        bytes[0], bytes[1], bytes[2], bytes[3],
-        bytes[4], bytes[5],
-        bytes[6], bytes[7],
-        bytes[8], bytes[9],
-        bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15]
+        bytes[0],
+        bytes[1],
+        bytes[2],
+        bytes[3],
+        bytes[4],
+        bytes[5],
+        bytes[6],
+        bytes[7],
+        bytes[8],
+        bytes[9],
+        bytes[10],
+        bytes[11],
+        bytes[12],
+        bytes[13],
+        bytes[14],
+        bytes[15]
     )
 }
 
@@ -33,23 +44,57 @@ fn parse_label(bytes: &[u8]) -> String {
 
 fn parse_features(compat: u32, incompat: u32, ro_compat: u32) -> Vec<&'static str> {
     let mut features = Vec::new();
-    if compat & 0x0004 != 0 { features.push("has_journal"); }
-    if compat & 0x0008 != 0 { features.push("ext_attr"); }
-    if compat & 0x0010 != 0 { features.push("resize_inode"); }
-    if compat & 0x0020 != 0 { features.push("dir_index"); }
-    if incompat & 0x0002 != 0 { features.push("filetype"); }
-    if incompat & 0x0040 != 0 { features.push("extents"); }
-    if incompat & 0x0080 != 0 { features.push("64bit"); }
-    if incompat & 0x0200 != 0 { features.push("flex_bg"); }
-    if incompat & 0x10000 != 0 { features.push("encrypt"); }
-    if ro_compat & 0x0001 != 0 { features.push("sparse_super"); }
-    if ro_compat & 0x0002 != 0 { features.push("large_file"); }
-    if ro_compat & 0x0004 != 0 { features.push("btree_dir"); }
-    if ro_compat & 0x0008 != 0 { features.push("huge_file"); }
-    if ro_compat & 0x0010 != 0 { features.push("gdt_csum"); }
-    if ro_compat & 0x0020 != 0 { features.push("dir_nlink"); }
-    if ro_compat & 0x0040 != 0 { features.push("extra_isize"); }
-    if ro_compat & 0x0400 != 0 { features.push("metadata_csum"); }
+    if compat & 0x0004 != 0 {
+        features.push("has_journal");
+    }
+    if compat & 0x0008 != 0 {
+        features.push("ext_attr");
+    }
+    if compat & 0x0010 != 0 {
+        features.push("resize_inode");
+    }
+    if compat & 0x0020 != 0 {
+        features.push("dir_index");
+    }
+    if incompat & 0x0002 != 0 {
+        features.push("filetype");
+    }
+    if incompat & 0x0040 != 0 {
+        features.push("extents");
+    }
+    if incompat & 0x0080 != 0 {
+        features.push("64bit");
+    }
+    if incompat & 0x0200 != 0 {
+        features.push("flex_bg");
+    }
+    if incompat & 0x10000 != 0 {
+        features.push("encrypt");
+    }
+    if ro_compat & 0x0001 != 0 {
+        features.push("sparse_super");
+    }
+    if ro_compat & 0x0002 != 0 {
+        features.push("large_file");
+    }
+    if ro_compat & 0x0004 != 0 {
+        features.push("btree_dir");
+    }
+    if ro_compat & 0x0008 != 0 {
+        features.push("huge_file");
+    }
+    if ro_compat & 0x0010 != 0 {
+        features.push("gdt_csum");
+    }
+    if ro_compat & 0x0020 != 0 {
+        features.push("dir_nlink");
+    }
+    if ro_compat & 0x0040 != 0 {
+        features.push("extra_isize");
+    }
+    if ro_compat & 0x0400 != 0 {
+        features.push("metadata_csum");
+    }
     features
 }
 
@@ -107,7 +152,11 @@ pub fn run_info(source_path: &str, json: bool) -> Result<()> {
         println!("uuid:              {}", info.uuid);
         println!(
             "label:             {}",
-            if info.label.is_empty() { "(none)" } else { &info.label }
+            if info.label.is_empty() {
+                "(none)"
+            } else {
+                &info.label
+            }
         );
         println!("block_size:        {}", info.block_size);
         println!("inodes_count:      {}", info.inodes_count);
