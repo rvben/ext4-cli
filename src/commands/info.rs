@@ -1,4 +1,4 @@
-use anyhow::{bail, Result};
+use anyhow::{anyhow, bail, Result};
 use serde::Serialize;
 use std::io::{Read, Seek, SeekFrom};
 
@@ -46,7 +46,10 @@ fn parse_features(compat: u32, incompat: u32, ro_compat: u32) -> Vec<&'static st
     if ro_compat & 0x0002 != 0 { features.push("large_file"); }
     if ro_compat & 0x0004 != 0 { features.push("btree_dir"); }
     if ro_compat & 0x0008 != 0 { features.push("huge_file"); }
-    if ro_compat & 0x0040 != 0 { features.push("metadata_csum"); }
+    if ro_compat & 0x0010 != 0 { features.push("gdt_csum"); }
+    if ro_compat & 0x0020 != 0 { features.push("dir_nlink"); }
+    if ro_compat & 0x0040 != 0 { features.push("extra_isize"); }
+    if ro_compat & 0x0400 != 0 { features.push("metadata_csum"); }
     features
 }
 
@@ -78,10 +81,15 @@ pub fn run_info(source_path: &str, json: bool) -> Result<()> {
         );
     }
 
+    let log_block_size = read_u32_le(&buf, 0x18);
+    let block_size = 1024u32
+        .checked_shl(log_block_size)
+        .ok_or_else(|| anyhow!("invalid s_log_block_size: {log_block_size}"))?;
+
     let info = FsInfo {
         uuid: parse_uuid(&buf[0x68..0x78]),
         label: parse_label(&buf[0x78..0x88]),
-        block_size: 1024u32 << read_u32_le(&buf, 0x18),
+        block_size,
         inodes_count: read_u32_le(&buf, 0x00),
         free_inodes_count: read_u32_le(&buf, 0x10),
         blocks_count: read_u32_le(&buf, 0x04),
