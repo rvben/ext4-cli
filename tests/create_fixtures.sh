@@ -16,13 +16,21 @@ fi
 DIR="$(cd "$(dirname "$0")/fixtures" && pwd)"
 mkdir -p "$DIR"
 
+STAGING=$(mktemp -d)
+cleanup() {
+    local rc=$?
+    rm -rf "$STAGING"
+    if [ $rc -ne 0 ]; then
+        rm -f "$DIR/minimal.img" "$DIR/rich.img"
+    fi
+}
+trap cleanup EXIT
+
 # minimal.img: 4 MB, nearly empty
 dd if=/dev/zero of="$DIR/minimal.img" bs=1M count=4 2>/dev/null
 $MKFS -F -q -L "minimal" "$DIR/minimal.img"
 
 # rich.img: 8 MB with a directory tree
-STAGING=$(mktemp -d)
-trap 'rm -rf "$STAGING"' EXIT
 
 mkdir -p "$STAGING/etc"
 mkdir -p "$STAGING/home/alice"
