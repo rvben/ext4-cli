@@ -20,4 +20,5 @@ jobs:
         run: brew install e2fsprogs
       - name: Generate fixtures
         run: make fixtures
+      - run: make lint
       - run: make test
