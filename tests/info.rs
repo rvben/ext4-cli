@@ -26,19 +26,27 @@ fn source_missing_gives_error() {
 
 #[test]
 fn source_nonexistent_gives_error() {
+    // A non-existent file path triggers not_found (exit code 3), not a generic I/O error.
     Command::cargo_bin("ext4")
         .unwrap()
         .args(["--source", "/nonexistent/path.img", "info"])
         .assert()
         .failure()
-        .code(1);
+        .code(3);
 }
 
 #[test]
 fn info_minimal_human_output() {
+    // Explicit --output text to verify human-readable output regardless of TTY detection.
     Command::cargo_bin("ext4")
         .unwrap()
-        .args(["--source", &fixture("minimal.img"), "info"])
+        .args([
+            "--source",
+            &fixture("minimal.img"),
+            "--output",
+            "text",
+            "info",
+        ])
         .assert()
         .success()
         .stdout(predicate::str::contains("label:"))
@@ -49,7 +57,13 @@ fn info_minimal_human_output() {
 fn info_minimal_json_output() {
     let output = Command::cargo_bin("ext4")
         .unwrap()
-        .args(["--source", &fixture("minimal.img"), "info", "--json"])
+        .args([
+            "--source",
+            &fixture("minimal.img"),
+            "--output",
+            "json",
+            "info",
+        ])
         .assert()
         .success()
         .get_output()

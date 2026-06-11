@@ -2,7 +2,7 @@ use anyhow::{Result, anyhow, bail};
 use serde::Serialize;
 use std::io::{Read, Seek, SeekFrom};
 
-use crate::output;
+use crate::output::{self, OutputFormat};
 
 const SUPERBLOCK_OFFSET: u64 = 1024;
 const SUPERBLOCK_MAGIC: u16 = 0xEF53;
@@ -110,7 +110,7 @@ struct FsInfo {
     features: Vec<&'static str>,
 }
 
-pub fn run_info(source_path: &str, json: bool) -> Result<()> {
+pub fn run_info(source_path: &str, format: OutputFormat) -> Result<()> {
     let mut file = std::fs::File::open(source_path)?;
     file.seek(SeekFrom::Start(SUPERBLOCK_OFFSET))?;
 
@@ -146,7 +146,7 @@ pub fn run_info(source_path: &str, json: bool) -> Result<()> {
         ),
     };
 
-    if json {
+    if output::is_json(format) {
         output::print_json(&info);
     } else {
         println!("uuid:              {}", info.uuid);

@@ -7,9 +7,17 @@ fn fixture(name: &str) -> String {
 
 #[test]
 fn stat_file_succeeds() {
+    // Explicit --output text because piped stdout causes auto-JSON mode.
     Command::cargo_bin("ext4")
         .unwrap()
-        .args(["--source", &fixture("rich.img"), "stat", "/etc/fstab"])
+        .args([
+            "--source",
+            &fixture("rich.img"),
+            "--output",
+            "text",
+            "stat",
+            "/etc/fstab",
+        ])
         .assert()
         .success()
         .stdout(predicate::str::contains("type:"))
@@ -19,9 +27,17 @@ fn stat_file_succeeds() {
 
 #[test]
 fn stat_directory_succeeds() {
+    // Explicit --output text because piped stdout causes auto-JSON mode.
     Command::cargo_bin("ext4")
         .unwrap()
-        .args(["--source", &fixture("rich.img"), "stat", "/etc"])
+        .args([
+            "--source",
+            &fixture("rich.img"),
+            "--output",
+            "text",
+            "stat",
+            "/etc",
+        ])
         .assert()
         .success()
         .stdout(predicate::str::contains("directory"));
@@ -34,8 +50,9 @@ fn stat_json_output() {
         .args([
             "--source",
             &fixture("rich.img"),
+            "--output",
+            "json",
             "stat",
-            "--json",
             "/etc/fstab",
         ])
         .assert()

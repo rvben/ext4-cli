@@ -38,19 +38,35 @@ fn ls_subdir() {
 
 #[test]
 fn ls_long_shows_mode_and_size() {
+    // Explicit --output text because piped stdout causes auto-JSON mode.
     Command::cargo_bin("ext4")
         .unwrap()
-        .args(["--source", &fixture("rich.img"), "ls", "-l", "/etc"])
+        .args([
+            "--source",
+            &fixture("rich.img"),
+            "--output",
+            "text",
+            "ls",
+            "-l",
+            "/etc",
+        ])
         .assert()
         .success()
         .stdout(predicate::str::is_match(r"-rw.* fstab").unwrap());
 }
 
 #[test]
-fn ls_json_is_valid_array() {
+fn ls_json_output_is_envelope() {
     let output = Command::cargo_bin("ext4")
         .unwrap()
-        .args(["--source", &fixture("rich.img"), "ls", "--json", "/etc"])
+        .args([
+            "--source",
+            &fixture("rich.img"),
+            "--output",
+            "json",
+            "ls",
+            "/etc",
+        ])
         .assert()
         .success()
         .get_output()
@@ -58,8 +74,9 @@ fn ls_json_is_valid_array() {
         .clone();
 
     let json: serde_json::Value = serde_json::from_slice(&output).unwrap();
-    assert!(json.is_array());
-    let arr = json.as_array().unwrap();
+    assert!(json["items"].is_array());
+    assert!(json["total"].is_number());
+    let arr = json["items"].as_array().unwrap();
     let names: Vec<&str> = arr.iter().map(|e| e["name"].as_str().unwrap()).collect();
     assert!(names.contains(&"fstab"));
     assert!(names.contains(&"passwd"));

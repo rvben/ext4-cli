@@ -2,7 +2,7 @@ use anyhow::Result;
 use ext4_view::{Ext4, FileType};
 use serde::Serialize;
 
-use crate::output;
+use crate::output::{self, OutputFormat};
 
 #[derive(Serialize)]
 struct StatOutput {
@@ -16,7 +16,7 @@ struct StatOutput {
     gid: u32,
 }
 
-pub fn run_stat(fs: &Ext4, path: &str, json: bool) -> Result<()> {
+pub fn run_stat(fs: &Ext4, path: &str, format: OutputFormat) -> Result<()> {
     let meta = fs.symlink_metadata(path)?;
     let file_type = meta.file_type();
 
@@ -40,7 +40,7 @@ pub fn run_stat(fs: &Ext4, path: &str, json: bool) -> Result<()> {
         gid: meta.gid(),
     };
 
-    if json {
+    if output::is_json(format) {
         output::print_json(&stat);
     } else {
         println!("path:       {}", stat.path);

@@ -8,7 +8,7 @@ pub fn run_cp(fs: &Ext4, src_path: &str, local_dest: &str, recursive: bool) -> R
 
     if meta.is_dir() {
         if !recursive {
-            bail!("'{}' is a directory — use -r to copy recursively", src_path);
+            bail!("'{}' is a directory - use -r to copy recursively", src_path);
         }
         copy_dir(fs, src_path, Path::new(local_dest))
     } else {
