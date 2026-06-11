@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+
+## [0.0.2](https://github.com/rvben/ext4-cli/compare/v0.0.1...v0.0.2) - 2026-06-11
+
+### Added
+
+- add clispec v0.2 compliance (24/24 score) ([810bb87](https://github.com/rvben/ext4-cli/commit/810bb87f26c9091bda70acd862b62b5d153369d3))
+- add PyPI distribution via maturin ([6909fce](https://github.com/rvben/ext4-cli/commit/6909fcef7a0f00d39a50c9c3cbb4dfe6f1979c76))
+
+### Fixed
+
+- **ci**: use --check-url for uv publish to skip already-uploaded files ([ed9e19a](https://github.com/rvben/ext4-cli/commit/ed9e19a3c90afda0c272234cbe12f22612185bd6))
+- **ci**: correct wheel artifact path and add --skip-existing for PyPI publish ([9ec39c6](https://github.com/rvben/ext4-cli/commit/9ec39c62e618178f1dd855ef4114befef2c94f8b))
+
 ## [0.0.1] - 2026-04-13
 
 ### Added
