@@ -108,8 +108,7 @@ pub fn run_schema() -> Result<()> {
             {"kind": "permission_denied", "exit_code": 2, "retryable": false, "description": "Insufficient permissions to open the source"},
             {"kind": "not_found", "exit_code": 3, "retryable": false, "description": "Path not found inside the filesystem"},
             {"kind": "invalid_input", "exit_code": 4, "retryable": false, "description": "Invalid argument or flag value"},
-            {"kind": "invalid_filesystem", "exit_code": 5, "retryable": false, "description": "Source is not a valid ext4 filesystem"},
-            {"kind": "conflict", "exit_code": 6, "retryable": false, "description": "Destination already exists with different content"}
+            {"kind": "invalid_filesystem", "exit_code": 5, "retryable": false, "description": "Source is not a valid ext4 filesystem"}
         ]
     });
 
