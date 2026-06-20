@@ -1,4 +1,4 @@
-.PHONY: build test lint fixtures clean install
+.PHONY: build test lint fixtures check clean install release-patch release-minor release-major
 
 build:
 	cargo build
@@ -13,9 +13,20 @@ lint:
 fixtures:
 	bash tests/create_fixtures.sh
 
+check: lint fixtures test
+
 clean:
 	cargo clean
 	rm -f tests/fixtures/*.img
 
 install:
 	cargo install --path .
+
+release-patch:
+	vership bump patch
+
+release-minor:
+	vership bump minor
+
+release-major:
+	vership bump major
