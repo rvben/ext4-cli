@@ -1,5 +1,6 @@
 use anyhow::anyhow;
 use clap::{Parser, Subcommand};
+use std::io::IsTerminal;
 use std::process;
 
 mod commands;
@@ -37,6 +38,8 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
+    /// Show supported ext4 operations without opening a filesystem
+    Capabilities,
     /// List directory contents
     Ls {
         /// Show permissions, uid, gid, size
@@ -79,7 +82,7 @@ enum Commands {
     },
     /// Show filesystem information
     Info,
-    /// Print machine-readable schema (clispec v0.2)
+    /// Print the machine-readable clispec v0.3 candidate contract
     Schema,
 }
 
@@ -132,7 +135,7 @@ fn main() {
             );
             process::exit(5);
         }
-        output::emit_error("io_error", &msg, None);
+        output::emit_error("io", &msg, None);
         process::exit(1);
     }
 }
@@ -141,6 +144,19 @@ fn run(cli: Cli) -> anyhow::Result<()> {
     let fmt = cli.output;
 
     match cli.command {
+        Commands::Capabilities => {
+            let capabilities = ["ls", "cat", "cp", "stat", "info"];
+            match fmt {
+                OutputFormat::Json => {
+                    println!("{}", serde_json::json!({"capabilities": capabilities}));
+                }
+                OutputFormat::Auto if !std::io::stdout().is_terminal() => {
+                    println!("{}", serde_json::json!({"capabilities": capabilities}));
+                }
+                _ => println!("{}", capabilities.join("\n")),
+            }
+            Ok(())
+        }
         Commands::Schema => commands::run_schema(),
         Commands::Info => {
             let src = require_source(cli.source)?;
@@ -187,7 +203,14 @@ fn run(cli: Cli) -> anyhow::Result<()> {
         } => {
             let src = require_source(cli.source)?;
             let fs = source::open_source(&src)?;
-            commands::run_cp(&fs, &src_path, &local_dest, recursive)
+            commands::run_cp(&fs, &src_path, &local_dest, recursive)?;
+            if output::is_json(fmt) {
+                output::print_json(&serde_json::json!({
+                    "source": src_path,
+                    "destination": local_dest
+                }));
+            }
+            Ok(())
         }
         Commands::Stat { path } => {
             let src = require_source(cli.source)?;

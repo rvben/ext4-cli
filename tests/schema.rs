@@ -14,15 +14,15 @@ fn schema_command_produces_valid_json() {
 
     let value: serde_json::Value =
         serde_json::from_slice(&output).expect("schema must be valid JSON");
-    assert_eq!(value["clispec"].as_str(), Some("0.2"));
+    assert_eq!(value["clispec"].as_str(), Some("0.3"));
     assert_eq!(value["name"].as_str(), Some("ext4"));
     assert!(value["version"].is_string());
     assert!(value["commands"].is_array());
 }
 
 #[test]
-fn schema_validates_against_clispec_v02() {
-    let schema_bytes = include_bytes!("fixtures/clispec-v0.2.json");
+fn schema_validates_against_clispec_v03() {
+    let schema_bytes = include_bytes!("fixtures/clispec-v0.3.json");
     let schema_value: serde_json::Value = serde_json::from_slice(schema_bytes).unwrap();
     let validator = jsonschema::validator_for(&schema_value).expect("clispec schema must compile");
 
@@ -37,7 +37,7 @@ fn schema_validates_against_clispec_v02() {
 
     let doc: serde_json::Value = serde_json::from_slice(&output).unwrap();
     if let Err(e) = validator.validate(&doc) {
-        panic!("schema output does not validate against clispec v0.2: {e}");
+        panic!("schema output does not validate against clispec v0.3: {e}");
     }
 }
 
@@ -61,7 +61,7 @@ fn schema_mentioned_in_help() {
 }
 
 #[test]
-fn schema_has_all_commands_with_mutation_markers() {
+fn schema_has_all_commands_with_effects() {
     let output = Command::cargo_bin("ext4")
         .unwrap()
         .arg("schema")
@@ -76,11 +76,31 @@ fn schema_has_all_commands_with_mutation_markers() {
     assert!(!commands.is_empty());
     for cmd in commands {
         assert!(
-            cmd["mutating"].is_boolean(),
-            "Command {} is missing mutating marker",
+            cmd["effects"].is_string(),
+            "Command {} is missing effects",
             cmd["name"]
         );
     }
+}
+
+#[test]
+fn schema_classifies_output_and_mutation_capabilities() {
+    let output = Command::cargo_bin("ext4")
+        .unwrap()
+        .arg("schema")
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+    let doc: serde_json::Value = serde_json::from_slice(&output).unwrap();
+    let commands = doc["commands"].as_array().unwrap();
+    let command = |name: &str| commands.iter().find(|c| c["name"] == name).unwrap();
+
+    assert_eq!(command("cat")["output_kind"], "opaque");
+    assert_eq!(command("cp")["effects"], "idempotent");
+    assert_eq!(command("ls")["cardinality"], "unbounded");
+    assert_eq!(command("ls")["pagination"]["style"], "offset");
 }
 
 #[test]

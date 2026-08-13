@@ -16,6 +16,25 @@ fn cat_file_outputs_content() {
 }
 
 #[test]
+fn cat_opaque_output_is_not_reformatted_as_json() {
+    let source = fixture("rich.img");
+    let default = Command::cargo_bin("ext4")
+        .unwrap()
+        .args(["--source", &source, "cat", "/etc/fstab"])
+        .output()
+        .unwrap();
+    let explicit_json = Command::cargo_bin("ext4")
+        .unwrap()
+        .args(["--source", &source, "--output", "json", "cat", "/etc/fstab"])
+        .output()
+        .unwrap();
+
+    assert!(default.status.success());
+    assert!(explicit_json.status.success());
+    assert_eq!(explicit_json.stdout, default.stdout);
+}
+
+#[test]
 fn cat_nonexistent_exits_3() {
     Command::cargo_bin("ext4")
         .unwrap()

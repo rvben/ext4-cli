@@ -91,11 +91,38 @@ fn error_envelope_has_known_kind() {
     let value: serde_json::Value = serde_json::from_str(last_line).unwrap();
     let kind = value["error"]["kind"].as_str().unwrap();
     let known_kinds = [
-        "io_error",
+        "io",
         "permission_denied",
         "not_found",
         "invalid_input",
         "invalid_filesystem",
     ];
     assert!(known_kinds.contains(&kind), "unknown error kind: {kind}");
+}
+
+#[test]
+fn cp_emits_a_json_success_document_when_requested() {
+    let tmp = tempfile::TempDir::new().unwrap();
+    let destination = tmp.path().join("fstab");
+    let output = Command::cargo_bin("ext4")
+        .unwrap()
+        .args([
+            "--source",
+            &fixture("rich.img"),
+            "--output",
+            "json",
+            "cp",
+            "/etc/fstab",
+            destination.to_str().unwrap(),
+        ])
+        .assert()
+        .success()
+        .get_output()
+        .stdout
+        .clone();
+
+    let value: serde_json::Value =
+        serde_json::from_slice(&output).expect("cp JSON output must be a document");
+    assert_eq!(value["source"], "/etc/fstab");
+    assert_eq!(value["destination"], destination.to_str().unwrap());
 }
