@@ -11,6 +11,10 @@ repository = "https://github.com/rvben/ext4-cli"
 name = "ext4"
 path = "src/main.rs"
 
+[[bin]]
+name = "ext4-cli"
+path = "src/ext4_cli_alias.rs"
+
 [dependencies]
 ext4-view = { version = "0.9", features = ["std"] }
 clap = { version = "4", features = ["derive", "env"] }
