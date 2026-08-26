@@ -4,7 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.0.5](https://github.com/rvben/ext4-cli/compare/v0.0.4...v0.0.5) - 2026-08-26
 
+### Added
+
+- **packaging**: add package-named launcher ([3a12760](https://github.com/rvben/ext4-cli/commit/3a12760b9ddaa8f72fa2d40b7827b3e75602ceb6))
+
+### Fixed
+
+- **ci**: install pinned Rust components ([64427e4](https://github.com/rvben/ext4-cli/commit/64427e437efb681ee3a96f089fefb792e9ae88a0))
 
 ## [0.0.3](https://github.com/rvben/ext4-cli/compare/v0.0.2...v0.0.3) - 2026-06-20
 
